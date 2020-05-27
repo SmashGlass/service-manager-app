@@ -1,0 +1,16 @@
+version: '2'
+services:
+  servicemanager-mongodb:
+    image: mongo:4.2.6
+    ports:
+      - '27017:27017'
+    command: mongos --configdb csvr/servicemanager-mongodb-config --bind_ip 0.0.0.0
+  servicemanager-mongodb-node:
+    build:
+      context: .
+      dockerfile: mongodb/MongoDB.Dockerfile
+    command: mongod --shardsvr --replSet rs1
+  servicemanager-mongodb-config:
+    image: mongo:4.2.6
+    container_name: servicemanager-mongodb-config
+    command: mongod --configsvr --dbpath /data/db --replSet csvr
